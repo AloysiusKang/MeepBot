@@ -41,6 +41,31 @@ const createService = async (req, res) => {
   }
 };
 
+const searchServices = async (req, res) => {
+    // service_name [SN], rating [RT], robot [RB], total_used [TU], price [P], date [D]
+    let {SN, RT, RB, TU, P, D} = req.query   
+    
+    let pipeline = [];
+    
+    // FIlter and search
+    if(SN){
+        pipeline.push({$match: {service_name: {$regex: SN, $options: "i"}}})
+    }
+    if(RB){
+        pipeline.push({$match: {robot: {$regex: RB, $options: "i"}}})
+    }
+
+    // Last check
+    if(pipeline.length == 0){
+        res.status(200).json("Test")
+    }
+    else{
+        const services = await serviceModel.aggregate(pipeline)
+        res.status(200).json(services);
+    }
+
+}
+
 const deleteService = async (req, res) => {
     const {id} = req.params
     if(!mongoose.Types.ObjectId.isValid(id)){
@@ -77,4 +102,4 @@ const updateService = async (req, res) => {
     res.status(200).json(service);  
 }
 
-module.exports = { getServices, getService, createService, deleteService, updateService };
+module.exports = { getServices, getService, createService, deleteService, updateService, searchServices };

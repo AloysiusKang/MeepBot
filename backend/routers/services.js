@@ -8,9 +8,12 @@ const {
   createService,
   deleteService,
   updateService,
+  searchServices,
 } = require("../controllers/servicesController");
 
 router.get("/", getServices);
+
+router.get("/search", searchServices)
 
 router.get("/:id", getService);
 
